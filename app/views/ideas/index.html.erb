@@ -1,0 +1,34 @@
+<h1>Welcome, <%= @user.first_name %>!</h1>
+<a href="/signout">Logout</a>
+<br />
+<h2>Post Idea</h2>
+<% if flash[:errors] %>
+	<% flash[:errors].each do |error| %>
+		<p class="red"><%= error %></p>
+	<% end %>
+<% end %>
+<% if flash[:success] %>
+	<p class="green"><%= flash[:success] %></p>
+<% end %>
+<%= form_for( :idea, :url => ideas_create_path ) do |f| %>
+	<%= f.text_area :idea %>
+	<%= f.hidden_field :user_id, :value => @user.id %>
+	<%= f.submit "Idea!" %>
+<% end %>
+<br />
+
+<% @ideas.each do |idea| %>
+ <p><a href="users/<%= idea.user.id %>"><%= idea.user.alias %></a> says:</p>
+ <div class="IDEA"><%= idea.idea %></div>
+ <% if idea.user.id == @user.id %>
+ 	<a href="/ideas/<%= idea.id %>/destroy">Delete</a>
+ <% end %>
+	<%= form_for( :like, :url => likes_create_path ) do |f| %>
+		<%= f.hidden_field :user_id, :value => @user.id %>
+		<%= f.hidden_field :idea_id, :value => idea.id %>
+		<%= f.submit "Like" %>
+	<% end %>
+	<a href="ideas/<%= idea.id %>"><%= idea.likes.count %> people</a> like this
+	<br /> 
+	<hr />
+<% end %>
